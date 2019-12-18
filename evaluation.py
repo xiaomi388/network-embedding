@@ -221,21 +221,27 @@ def sample_visualization_v2():
     ids = pd.read_csv("./dataset/node2vec/terr_0.3_0.01.content", header=None, sep='\t').iloc[:20, 0].values
 
     VERSIONS = ["terr_0.3_0.01_da-node2vec_{}.emd".format(i) for i in [1, 5, 9] ]
-    for VERSION in range(['terr_0.3_0.01_da-node2vec_1.emd']):
-        pass
 
+    X = None
+    Y = None
     for version in VERSIONS:
-        feature_df = pd.read_csv("./emb/{}.emd".format(VERSION), header=None, **settings).iloc[:, :]
+        feature_df = pd.read_csv("./emb/{}.emd".format(version), header=None, **settings).iloc[:, :]
         feature_df = feature_df.loc[ids, :]
-        print(feature_df.iloc[:, :3])
+        # print(feature_df.iloc[:, :3])
         # draw the first four nodes
 
         zero_data = np.ones(shape=(len(ids), 1))
         for i in range(0, 4):
             zero_data[i] = i + 2
         labels = pd.DataFrame(zero_data)
-        Y = labels.values
-        X = feature_df.values
+        if X:
+            X = feature_df.values
+        else:
+            X += feature_df.values
+        if Y:
+            Y = labels.values
+        else:
+            Y += labels.values
 
     pca = PCA(n_components=2)
     principalComponents = pca.fit_transform(X)
